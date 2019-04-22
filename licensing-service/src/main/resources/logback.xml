@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    在系统里调用外部的地方，记录请求的接口、参数、返回结果、花费时间、遇到的异常等
+    在系统里出现异常的地方，记录异常的堆栈，如果可以，尽量通过异常的日志能还原当时的情景，
+    比如当时受影响的是哪个用户、传入的变量是什么、处理哪些核心数据引发的异常等等
+    有些代码在编写时就知道很难被执行到或者不希望被执行到、以及一些基本不会走到的else块，这些地方需要记录下核心日志
+-->
+<!-- 定时扫描 60秒扫一下,debug=false,设定不输入logback本身的日志 -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!-- trace debug info warn error -->
+    <!-- 定义参数常量 -->
+    <property name="log.encoding" value="UTF-8"/>
+    <property name="log.level" value="debug"/>
+    <property name="log.maxHistrory" value="30"/>
+    <property name="log.filePath" value="${TOMCAT_HOME}/logs/licensing-service"/>
+
+    <property name="log.pattern"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %boldYellow([%thread]) %boldGreen(%logger{50}) - %msg%n"/>
+    <property name="log.pattern1"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %boldYellow([%thread]) %boldGreen(%logger{50}) - %msg%n"/>
+    <property name="log.pattern2"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %boldYellow([%thread]) %cyan(%logger{50}) - %msg%n"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.filePath}/debug.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.filePath}/debug/debug.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${log.maxHistrory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!-- 过滤日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.filePath}/info.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.filePath}/info/info.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${log.maxHistrory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!-- 过滤日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.filePath}/warn.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.filePath}/warn/warn.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${log.maxHistrory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!-- 过滤日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.filePath}/error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.filePath}/error/error.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${log.maxHistrory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!-- 过滤日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- additivity=true logger将父logger的appender也加入下面 -->
+    <logger name="com.simple.eagleeye.licensingservice" additivity="true" level="${log.level}">
+        <appender-ref ref="debug"/>
+        <appender-ref ref="info"/>
+        <appender-ref ref="warn"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="console"/>
+    </root>
+
+</configuration>

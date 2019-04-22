@@ -1,0 +1,38 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://gitee.com/thesixonenine/SpringcloudConfig
+          search-paths: respo
+      uri: http://118.24.18.156:8888
+#    inetutils:
+#      default-ip-address: 118.24.18.156
+#    stream:
+#      kafka:
+#        binder:
+#          brokers: localhost
+#    bus:
+#      trace:
+#        enabled: true
+#      destination: MyBus
+#  rabbitmq:
+#    host: 118.24.18.156
+#    port: 5672
+#    username: guest
+#    password: guest
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://118.24.18.156:8761/eureka/
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: bus-refresh
